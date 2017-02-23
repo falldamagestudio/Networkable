@@ -11,7 +11,7 @@ Pull requests welcome!
 
 - The library contains two attributes, [NetworkableById] and [NetworkableByValue]. You add these tags to classes which you want to send over the network.
   You can add them to base classes as well; the attributes will then apply to all child classes.
-- The library contains a ScriptableObject, NetworkableSettings. It represents the database of class IDs and asset IDs that are known at compile/build time.
+- The library contains a ScriptableObject, NetworkableSettings. It represents the database of class IDs and asset IDs that are known at compile/build time. You need to trigger refresh of this database manually.
   It is used to ensure that classes and static assets/prefabs are assigned the same IDs in all game clients.
 - The library has a component, NetworkableInitializerComponent. It contains initialization logic for the Networkable system. You need to place this component in your start scene.
 
@@ -22,7 +22,7 @@ Pull requests welcome!
 * Create a subclass from ScriptableObject (in this example called PlayerIcon).
 * Tag your PlayerIcon class with the [NetworkableById] attribute.
 * Create a couple of instances of the PlayerIcon class in your Assets folder.
-* Update Networkable's Type IDs and Asset IDs.
+* Update NetworkableSettings's Type IDs and Asset IDs.
 
 You can now pass a PlayerIcon reference over the network without any extra logic:
 
@@ -59,7 +59,7 @@ and pass that component by ID.
 * Create a subclass from MonoBehaviour (in this example called DynamicallySpawnableObject).
 * Tag your DynamicallySpawnableObject class with the [NetworkableById] attribute.
 * Add your DynamicallySpawnableObject component to the prefabs which you want to be able to reference in network traffic.
-* Update Networkable's Type IDs and Asset IDs.
+* Update NetworkableSettings's Type IDs and Asset IDs.
 
 You can now pass a prefab reference over the network with a little extra logic:
 
@@ -102,7 +102,7 @@ but send them as a single base class type over the network.
 * Create a base class for your actions (in this example called Action).
 * Tag your base class with the [NetworkableByValue] attribute.
 * Create subclasses from Action. Add serialization/deserialization logic to your subclasses.
-* Update Networkable's Type IDs and Asset IDs.
+* Update NetworkableSettings's Type IDs and Asset IDs.
 
 You can now pass different actions between clients with a single RPC:
 
