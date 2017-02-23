@@ -34,7 +34,7 @@ You can now pass a PlayerIcon reference over the network without any extra logic
 		string Name;
 	}
 
-	public class PlayerIconVisualizer : MonoBehaviour
+	public class PlayerIconVisualizer : PunBehaviour
 	{
 		public void PlayerIconChosen(int playerId, PlayerIcon icon)
 		{
@@ -69,7 +69,7 @@ You can now pass a prefab reference over the network with a little extra logic:
 	{
 	}
 
-	public class PlayerLogic : MonoBehaviour
+	public class PlayerLogic : PunBehaviour
 	{
 		public void RequestInstantiatePrefab(GameObject prefab, Vector3 position, Quaternion orientation)
 		{
@@ -195,7 +195,7 @@ public class Jump : Action
 	}
 }
 
-public class MyPlayerComponent : MonoBehaviour
+public class MyPlayerComponent : PunBehaviour
 {
 	public void TriggerMeleeAttack(int animationId)
 	{
@@ -257,7 +257,7 @@ public class InitializeSpawnPointsInScene : MonoBehaviour
 This is also tricky, but can be done. The basic principle is to design your code so that the MasterClient creates the object and assigns the ID, and then tells all clients to do the same.
 
 ```
-public class MyPlayerComponent : MonoBehaviour
+public class MyPlayerComponent : PunBehaviour
 {
 	public void RequestInstantiatePrefab(GameObject prefab, Vector3 position, Quaternion orientation)
 	{
