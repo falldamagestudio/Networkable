@@ -26,7 +26,7 @@ Pull requests welcome!
 
 You can now pass a PlayerIcon reference over the network without any extra logic:
 
-```
+```csharp
 	[NetworkableById]
 	public class PlayerIcon : ScriptableObject
 	{
@@ -63,7 +63,7 @@ and pass that component by ID.
 
 You can now pass a prefab reference over the network with a little extra logic:
 
-```
+```csharp
 	[NetworkableById]
 	public class DynamicallySpawnableObject : MonoBehaviour
 	{
@@ -106,7 +106,7 @@ but send them as a single base class type over the network.
 
 You can now pass different actions between clients with a single RPC:
 
-```
+```csharp
 [NetworkableByValue]
 public abstract class Action
 {
@@ -229,7 +229,7 @@ This is tricky, but can be done. The basic principle is to have some initializat
 
 NOTE: I am not 100% certain whether the order of siblings in the same GameObject hierarchy level is deterministic. Perhaps Networkable should assign IDs to these objects offline instead?
 
-```
+```csharp
 [NetworkableById]
 public class SpawnPoint : MonoBehaviour
 {
@@ -256,7 +256,7 @@ public class InitializeSpawnPointsInScene : MonoBehaviour
 
 This is also tricky, but can be done. The basic principle is to design your code so that the MasterClient creates the object and assigns the ID, and then tells all clients to do the same.
 
-```
+```csharp
 public class MyPlayerComponent : PunBehaviour
 {
 	public void RequestInstantiatePrefab(GameObject prefab, Vector3 position, Quaternion orientation)
