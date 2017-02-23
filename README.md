@@ -208,7 +208,7 @@ public class MyPlayerComponent : PunBehaviour
 	{
 		JumpAction jump = new JumpAction(height);
 		// jump will be serialized by-value and sent as a JumpAction to all clients
-		photonView.RPC("Rpc_TriggerAction", PhotonTargets.All, jumpp);
+		photonView.RPC("Rpc_TriggerAction", PhotonTargets.All, jump);
 	}
 	
 	[PunRPC]
@@ -276,7 +276,7 @@ public class MyPlayerComponent : PunBehaviour
 		//   DynamicallySpawnableObject reference before RpcMaster_InstantiatePrefab is invoked
 
 		// Instantiate prefab on MasterClient
-		GameObject instance = InstantiatePrefab(componentOnPrefab.gameObject, position, orientation);
+		GameObject instance = GameObject.Instantiate(componentOnPrefab.gameObject, position, orientation);
 		DynamicallySpawnableObject componentOnInstance = instance.GetComponent(DynamicallySpawnableObject);
 		
 		// Assign ID to the newly created instance
@@ -287,12 +287,16 @@ public class MyPlayerComponent : PunBehaviour
 		photonView.RPC("RpcClient_InstantiatePrefab", PhotonTargets.Others, componentOnPrefab, newInstanceId, position, orientation);
 	}
 
-
-	DynamicallySpawnableObject InstantiatePrefab(GameObject prefab, Vector3 position, Quaternion orientation)
+	[PunRpc]
+	public void RpcClient_InstantiatePrefab(DynamicallySpawnableObject componentOnPrefab, int instanceId, Vector3 position, Quaternion orientation)
 	{
-		return GameObject.Instantiate(prefab, position, orientation);
+		// Instantiate prefab on non-MasterClient
+		GameObject instance = GameObject.Instantiate(componentOnPrefab.gameObject, position, orientation);
+		DynamicallySpawnableObject componentOnInstance = instance.GetComponent(DynamicallySpawnableObject);
+		
+		// Assign ID that MasterClient decided on to the newly created instance
+		NetworkableId<DynamicallySpawnableObject>.AddWithId(componentOnInstance, instanceId);
 	}
-
 }
 ```
 
