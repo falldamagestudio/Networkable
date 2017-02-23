@@ -307,14 +307,21 @@ Do not place any networkable assets in Resources. Networkable does not support t
 The only documented, known-good approach requires that only one client assigns all IDs to dynamically-created objects. You can let any client initiate creation of new objects, but
 you will still need to pass the task of ID assignment to the MasterClient. If you let the requesting client assign the ID you will run into race conditions where different clients
 assign the same ID to different objects.
+Tracked in https://github.com/falldamagestudio/Networkable/issues/3
 
 ### Limited support for scene changes
 
 Networkable handles static assets well. For any IDs that are assigned as part of scene initialization and dynamic scene creation, you must manually ensure that you remove the
 ID<->item mappings before objects are deleted. Any mistakes will result in resource leaks or null pointer exceptions.
+Tracked in https://github.com/falldamagestudio/Networkable/issues/1
 
 ### All networkable assets are automatically referenced in the build
 
 One of the purposes of the Networkable system is to enable a Unity game client to receive an ID and instantly be able to translate that to a asset reference. A side effect of that
 is that the NetworkableSettings asset will contain references to all assets of networkable types in the entire project.
 All these assets will be included in your builds, regardless of whether they are actually used at runtime.
+
+### Dead IDs are not handled well
+
+If one machine deletes an object and removes the corresponding ID, and it shortly thereafter receives a reference to that object over the network, your application will either assert or throw a null reference exception. These race conditions can and will happen in real applications.
+Tracked in https://github.com/falldamagestudio/Networkable/issues/4
