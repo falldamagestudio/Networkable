@@ -52,7 +52,8 @@ public class NetworkableIdRegistry
     public int Add(object item)
     {
         //Debug.Log("Adding item " + item.ToString() + " of type " + item.GetType().FullName + " to container of type " + Type.FullName);
-        Assert.IsFalse(ItemsToIds.ContainsKey(item), "Attempted to add the same item twice to NetworkableIdRegistry of root type " + Type.FullName);
+        if (ItemsToIds.ContainsKey(item))
+            throw new ArgumentException("Attempted to add the same item twice to NetworkableIdRegistry of root type " + Type.FullName);
         int id = GetNextFreeId();
         ItemsToIds.Add(item, id);
         IdsToItems.Add(id, item);
@@ -68,8 +69,10 @@ public class NetworkableIdRegistry
     public int AddWithId(object item, int id)
     {
         //Debug.Log("Adding item " + item.ToString() + " of type " + item.GetType().FullName + " to container of type " + Type.FullName);
-        Assert.IsFalse(ItemsToIds.ContainsKey(item), "Attempted to add the same item twice to NetworkableIdRegistry of root type " + Type.FullName);
-        Assert.IsFalse(IdsToItems.ContainsKey(id), "Attempted to add the same ID twice to NetworkableIdRegistry of root type " + Type.FullName);
+        if (ItemsToIds.ContainsKey(item))
+            throw new ArgumentException("Attempted to add the same item twice to NetworkableIdRegistry of root type " + Type.FullName, "item");
+        if (IdsToItems.ContainsKey(id))
+            throw new ArgumentException("Attempted to add the same ID twice to NetworkableIdRegistry of root type " + Type.FullName, "id");
         ItemsToIds.Add(item, id);
         IdsToItems.Add(id, item);
         //Debug.Log("Adding NetworkableId. Registry type: " + Type.Name + " Object type: " + item.GetType().Name + " id: " + id);
@@ -82,7 +85,8 @@ public class NetworkableIdRegistry
     /// </summary>
     public void Remove(object item)
     {
-        Assert.IsTrue(ItemsToIds.ContainsKey(item), "Attempted to remove an item which does not exist in NetworkableIdRegistry of root type " + Type.FullName);
+        if (!ItemsToIds.ContainsKey(item))
+            throw new ArgumentException("Attempted to remove an item which does not exist in NetworkableIdRegistry of root type " + Type.FullName);
         int id = ItemsToIds[item];
         //Debug.Log("Removing NetworkableId. Registry type: " + Type.Name + " Object type: " + item.GetType().Name + " id: " + id);
         ItemsToIds.Remove(item);
@@ -94,7 +98,8 @@ public class NetworkableIdRegistry
     /// </summary>
     public int ToId(object item)
     {
-        Assert.IsTrue(ItemsToIds.ContainsKey(item), "Attempted look up an item that does not exist in NetworkableIdRegistry of root type " + Type.FullName);
+        if (!ItemsToIds.ContainsKey(item))
+            throw new ArgumentException("Attempted look up an item that does not exist in NetworkableIdRegistry of root type " + Type.FullName);
         return ItemsToIds[item];
     }
 
@@ -103,7 +108,8 @@ public class NetworkableIdRegistry
     /// </summary>
     public object FromId(int id)
     {
-        Assert.IsTrue(IdsToItems.ContainsKey(id), "Attempted look up item for an ID that does not exist in NetworkableIdRegistry of root type " + Type.FullName);
+        if (!IdsToItems.ContainsKey(id))
+            throw new ArgumentException("Attempted look up item for an ID that does not exist in NetworkableIdRegistry of root type " + Type.FullName);
         return IdsToItems[id];
     }
 }
