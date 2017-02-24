@@ -30,7 +30,7 @@ public class NetworkableIdRegistry
     public Type Type;
     public Dictionary<object, int> ItemsToIds = new Dictionary<object, int>();
     public Dictionary<int, object> IdsToItems = new Dictionary<int, object>();
-    public int NextFreeId = 0;
+    public int NextFreeId = 100000;
 
     public NetworkableIdRegistry(Type type)
     {
