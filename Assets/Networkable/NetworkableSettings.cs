@@ -69,12 +69,20 @@ public class NetworkableSettings : ScriptableObject {
             if (!PersistentTypeIds.Exists(persistentTypeId => persistentTypeId.TypeId == id))
                 return id;
 
+        for (int id = TypeIdRangeStart; id < searchStart; id++)
+            if (!PersistentTypeIds.Exists(persistentTypeId => persistentTypeId.TypeId == id))
+                return id;
+
         return -1;
     }
 
     public int NextAvailableAssetId(int searchStart)
     {
         for (int id = searchStart; id <= AssetIdRangeEnd; id++)
+            if (!PersistentAssetIds.Exists(persistentAssetId => persistentAssetId.Id == id))
+                return id;
+
+        for (int id = AssetIdRangeEnd; id < searchStart; id++)
             if (!PersistentAssetIds.Exists(persistentAssetId => persistentAssetId.Id == id))
                 return id;
 
