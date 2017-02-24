@@ -10,27 +10,20 @@ using UnityEditor;
 [CustomEditor(typeof(NetworkableSettings))]
 public class NetworkableSettingsInspector : Editor {
 
-    SerializedProperty typeIds;
-    SerializedProperty assetIds;
+    SerializedObject serializedObj;
     NetworkableSettings networkableSettings;
 
     private void OnEnable()
     {
-        typeIds = serializedObject.FindProperty("PersistentTypeIds");
-        Assert.IsNotNull(typeIds);
-
-        assetIds = serializedObject.FindProperty("PersistentAssetIds");
-        Assert.IsNotNull(assetIds);
-
         networkableSettings = (NetworkableSettings)target;
+        serializedObj = new SerializedObject(networkableSettings);
     }
 
     public override void OnInspectorGUI()
     {
+
         GUIStyle warningStyle = new GUIStyle(GUI.skin.button);
         warningStyle.normal.textColor = Color.red;
-
-        serializedObject.Update();
 
         /////////////// TypeIds //////////////////
 
@@ -42,6 +35,7 @@ public class NetworkableSettingsInspector : Editor {
             {
                 EditorUtility.DisplayDialog("Not enough type IDs available", "There are not enough IDs available for adding the new types to the PersistentTypeIds list.\n\nPerhaps it is time for you to break backwards compatibility by removing unused TypeIds, and then try again?", "Ok");
             }
+            EditorUtility.SetDirty(networkableSettings);
             Repaint();
         }
         if (GUILayout.Button("Remove all TypeIds", warningStyle))
@@ -50,6 +44,7 @@ public class NetworkableSettingsInspector : Editor {
             {
                 Undo.RecordObject(networkableSettings, "Remove all NetworkableSettings PersistentTypeIds");
                 networkableSettings.RemoveAllPersistentTypeIds();
+                EditorUtility.SetDirty(networkableSettings);
                 Repaint();
             }
         }
@@ -59,10 +54,15 @@ public class NetworkableSettingsInspector : Editor {
             {
                 Undo.RecordObject(networkableSettings, "Remove unused NetworkableSettings PersistentTypeIds");
                 networkableSettings.RemoveUnusedPersistentTypeIds(NetworkableInitializer.FindNetworkableTypesInAssembly());
+                EditorUtility.SetDirty(networkableSettings);
                 Repaint();
             }
         }
+        serializedObj.Update();
+        SerializedProperty typeIds = serializedObj.FindProperty("PersistentTypeIds");
+        Assert.IsNotNull(typeIds);
         EditorGUILayout.PropertyField(typeIds, true);
+        serializedObj.ApplyModifiedProperties();
         EditorGUILayout.EndVertical();
 
         /////////////// AssetIds //////////////////
@@ -78,6 +78,7 @@ public class NetworkableSettingsInspector : Editor {
                 if (!networkableSettings.AddNewPersistentAssetIds(NetworkableAssets.FindNetworkableAssets(networkableSettings.PersistentTypeIds)))
                     EditorUtility.DisplayDialog("Not enough asset IDs available", "There are not enough IDs available for adding the new assets to the PersistentAssetIds list.\n\nPerhaps it is time for you to break backwards compatibility by removing unused Asset IDs, and then try again?", "Ok");
             }
+            EditorUtility.SetDirty(networkableSettings);
             Repaint();
         }
         if (GUILayout.Button("Remove all AssetIds", warningStyle))
@@ -86,6 +87,7 @@ public class NetworkableSettingsInspector : Editor {
             {
                 Undo.RecordObject(networkableSettings, "Remove all NetworkableSettings PersistentAssetIds");
                 networkableSettings.RemoveAllPersistentAssetIds();
+                EditorUtility.SetDirty(networkableSettings);
                 Repaint();
             }
         }
@@ -98,13 +100,17 @@ public class NetworkableSettingsInspector : Editor {
                     EditorUtility.DisplayDialog("Not enough type IDs available", "There are not enough IDs available for adding the new types to the PersistentTypeIds list.\n\nPerhaps it is time for you to break backwards compatibility by removing unused TypeIds, and then try again?", "Ok");
                 else
                     networkableSettings.RemoveUnusedPersistentAssetIds(NetworkableAssets.FindNetworkableAssets(networkableSettings.PersistentTypeIds));
+                EditorUtility.SetDirty(networkableSettings);
                 Repaint();
             }
         }
-        EditorGUILayout.PropertyField(assetIds, true);
-        EditorGUILayout.EndVertical();
 
-        serializedObject.ApplyModifiedProperties();
+        serializedObj.Update();
+        SerializedProperty assetIds = serializedObj.FindProperty("PersistentAssetIds");
+        Assert.IsNotNull(assetIds);
+        EditorGUILayout.PropertyField(assetIds, true);
+        serializedObj.ApplyModifiedProperties();
+        EditorGUILayout.EndVertical();
     }
 
 }
