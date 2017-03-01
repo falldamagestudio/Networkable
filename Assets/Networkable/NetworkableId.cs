@@ -32,6 +32,14 @@ public class NetworkableId<T> where T : class
     }
 
     /// <summary>
+    /// Prepare NetworkableId<T> for use. 
+    /// </summary>
+    public static void Destroy()
+    {
+        rootRegistry = null;
+    }
+
+    /// <summary>
     /// Add an item to the registry. Once added, the registry can perform item<->ID translation for that item.
     /// Adding the same item twice is not supported.
     /// </summary>

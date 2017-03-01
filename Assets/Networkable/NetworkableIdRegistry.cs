@@ -25,6 +25,12 @@ public class NetworkableIdRegistry
         return rootRegistry;
     }
 
+    public static void DestroyRootRegistry(Type type)
+    {
+        Assert.IsTrue(AllRootRegistries.ContainsKey(type), "Attempted to destroy root NetworkableIdRegistry for root type " + type.FullName + " which does not exist");
+        AllRootRegistries.Remove(type);
+    }
+
     /////////////////////////////////////////////////////////////////////////////
 
     public Type Type;
