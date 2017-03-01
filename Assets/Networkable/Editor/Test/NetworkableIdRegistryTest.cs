@@ -30,6 +30,9 @@ namespace Test
 
             // Other classes should not yet provide a root registry
             Assert.Throws<KeyNotFoundException>(() => NetworkableIdRegistry.GetRootRegistry(typeof(DummyClass2)));
+
+            // Remove root registry
+            Assert.DoesNotThrow(() => NetworkableIdRegistry.DestroyRootRegistry(typeof(DummyClass1)));
         }
 
         [Test]
