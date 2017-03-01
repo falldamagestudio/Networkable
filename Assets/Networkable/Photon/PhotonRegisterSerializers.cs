@@ -165,4 +165,29 @@ public class PhotonRegisterSerializers : NetworkableInitializer.RegisterSerializ
     {
         DefaultObject.RegisterSerializerAndDeserializer(type);
     }
+
+    public void DeregisterSerializer(Type type)
+    {
+        // Photon 1.80 lacks a Photon.DeregisterType() function. This undoes the actions of Photon.RegisterType() as implemented in Photon 1.80.
+
+        byte typeId = (byte)NetworkableId<Type>.ToId(type);
+
+        // Invoke Protocol.CodeDict.Remove(typeId)
+        FieldInfo codeDictField = typeof(Protocol).GetField("CodeDict", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        Assert.IsNotNull(codeDictField, "Photon internals have changed; Protocol.CodeDict no longer exists");
+        object codeDict = codeDictField.GetValue(null);
+        Assert.IsNotNull(codeDict, "Photon internals have changed; Protocol.CodeDict no longer exists");
+        MethodInfo codeDictRemoveMethodInfo = codeDict.GetType().GetMethod("Remove");
+        Assert.IsNotNull(codeDictRemoveMethodInfo, "Photon internals have changed; Protocol.CodeDict is no longer a Dictionary");
+        codeDictRemoveMethodInfo.Invoke(codeDict, new object[] { (byte)typeId });
+
+        // Invoke Protocol.TypeDict.Remove(typeId)
+        FieldInfo typeDictField = typeof(Protocol).GetField("TypeDict", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        Assert.IsNotNull(typeDictField, "Photon internals have changed; Protocol.TypeDict no longer exists");
+        object typeDict = typeDictField.GetValue(null);
+        Assert.IsNotNull(typeDict, "Photon internals have changed; Protocol.TypeDict no longer exists");
+        MethodInfo typeDictRemoveMethodInfo = typeDict.GetType().GetMethod("Remove");
+        Assert.IsNotNull(typeDictRemoveMethodInfo, "Photon internals have changed; Protocol.TypeDict is no longer a Dictionary");
+        typeDictRemoveMethodInfo.Invoke(typeDict, new object[] { type });
+    }
 }

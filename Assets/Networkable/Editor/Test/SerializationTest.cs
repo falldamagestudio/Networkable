@@ -136,12 +136,12 @@ namespace Test
             }
         }
 
-
         [SetUp]
         public void SetUp()
         {
-            Debug.Log("registering things");
             NetworkableId<Type>.Create(null);
+
+            // Assign IDs for all networkable types
 
             NetworkableId<Type>.AddWithId(typeof(AbstractBaseByValue), 128);
             NetworkableId<Type>.AddWithId(typeof(ConcreteChildByValue), 129);
@@ -149,8 +149,12 @@ namespace Test
             NetworkableId<Type>.AddWithId(typeof(ConcreteChildById), 131);
             NetworkableId<Type>.AddWithId(typeof(NullMembers), 132);
 
+            // Items that get networked by ID need to have an ID hierarchy setup
+
             NetworkableId<AbstractBaseById>.Create(null);
             NetworkableId<ConcreteChildById>.Create(typeof(AbstractBaseById));
+
+            // Register Photon serializer/deserializer callbacks for the types
 
             PhotonRegisterSerializers registerSerializers = new PhotonRegisterSerializers();
 
@@ -159,15 +163,22 @@ namespace Test
             registerSerializers.RegisterSerializersForDefaultObjectType(typeof(AbstractBaseById));
             registerSerializers.RegisterSerializersForIdType(typeof(ConcreteChildById));
             registerSerializers.RegisterSerializersForValueType(typeof(NullMembers));
-
         }
 
         [TearDown]
         public void TearDown()
         {
-            Debug.Log("deregistering things");
+            // Unregister Photon serializer/deserializer callbacks for the types
 
-            // TODO: deregister serializers from Photon
+            PhotonRegisterSerializers registerSerializers = new PhotonRegisterSerializers();
+
+            registerSerializers.DeregisterSerializer(typeof(NullMembers));
+            registerSerializers.DeregisterSerializer(typeof(ConcreteChildById));
+            registerSerializers.DeregisterSerializer(typeof(AbstractBaseById));
+            registerSerializers.DeregisterSerializer(typeof(ConcreteChildByValue));
+            registerSerializers.DeregisterSerializer(typeof(AbstractBaseByValue));
+
+            // Deregister types & destroy type registries
 
             NetworkableId<Type>.Remove(typeof(NullMembers));
 
